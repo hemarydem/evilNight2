@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     //from there we can draw on the renderer
     SDL_SetRenderDrawColor(rendu,255, 0, 0, SDL_ALPHA_OPAQUE);
     SDL_Rect rect = {100, 100, 100, 100};
-    SDL_RenderDrawRect(rendu, &rect); 
+    SDL_RenderFillRect(rendu, &rect); 
     SDL_RenderDrawLine(rendu, 0, 0, 800,600);
     SDL_RenderPresent(rendu);
 
