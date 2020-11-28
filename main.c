@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         return EXIT_FAILURE;
     }
+    /*
     win = SDL_CreateWindow("firstWindow",
                         SDL_WINDOWPOS_CENTERED,
                         SDL_WINDOWPOS_CENTERED,
@@ -32,6 +33,13 @@ int main(int argc, char *argv[]) {
         SDL_DestroyRenderer(rendu);
         SDL_DestroyWindow(win);
         SDL_Quit();
+    }*/
+    if(SDL_CreateWindowAndRenderer(800,600,SDL_WINDOWPOS_CENTERED,&win,&rendu) == 1) {
+        fprintf(stderr, "Erreur SDL_CreateRenderer : %s", SDL_GetError());
+        SDL_DestroyRenderer(rendu);
+        SDL_DestroyWindow(win);
+        SDL_Quit();
+        return EXIT_FAILURE;
     }
    
     /* On agit sur la fenêtre ici */
