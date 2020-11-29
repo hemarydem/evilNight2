@@ -6,61 +6,47 @@
 #include<stdbool.h> 
 //gcc main.c $(sdl2-config --cflags --libs) 
 int main(int argc, char *argv[]) {
-    SDL_Window * win = NULL; 
-    SDL_Renderer * rendu = NULL;
-    SDL_Texture * text = NULL;
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    SDL_Texture *texture = NULL;
+    int statut = EXIT_FAILURE;
+
     if(0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
-        return EXIT_FAILURE;
-    }
-    win = SDL_CreateWindow("firstWindow",// creation of the window
-                        SDL_WINDOWPOS_CENTERED,
-                        SDL_WINDOWPOS_CENTERED,
-                        800,
-                        600,
-                        SDL_WINDOW_SHOWN);
-    if(NULL == win){
-        fprintf(stderr, "Erreur SDL_CreateWindow : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
         SDL_Quit();
-        return EXIT_FAILURE;
+        return statut;
     }
-    rendu = SDL_CreateRenderer(win,-1,SDL_RENDERER_ACCELERATED);//creation of the renderer
-    if(NULL == rendu) {
-        fprintf(stderr, "Erreur SDL_CreateRenderer : %s", SDL_GetError());
-        SDL_DestroyRenderer(rendu);
-        SDL_DestroyWindow(win);
+    if(0 != SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_SHOWN, &window, &renderer)) {
+        fprintf(stderr, "Erreur SDL_CreateWindowAndRenderer : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
         SDL_Quit();
+        return statut;
     }
-    text = SDL_CreateTexture(rendu, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 200, 200);
-    if(NULL == text) {
+    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
+                                SDL_TEXTUREACCESS_TARGET, 200, 200);
+    if(NULL == texture) {
         fprintf(stderr, "Erreur SDL_CreateTexture : %s", SDL_GetError());
-        SDL_DestroyTexture(text);
-        SDL_DestroyRenderer(rendu);
-        SDL_DestroyWindow(win);
+         if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
         SDL_Quit();
-    }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    if(0 != SDL_SetRenderDrawColor(rendu,255, 255, 220, SDL_ALPHA_OPAQUE)) {//preparing the color
-        fprintf(stderr, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
-        SDL_DestroyRenderer(rendu);
-        SDL_DestroyWindow(win);
-        SDL_Quit();
-    }
-    if(0 != SDL_RenderClear(rendu)){// put the background color on the renderer
-        fprintf(stderr, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
-        SDL_DestroyRenderer(rendu);
-        SDL_DestroyWindow(win);
-        SDL_Quit();
-    }
+        return statut;
+        }
 
-    //from there we can draw 
-    SDL_Rect rect = {50, 50, 100, 100};
-    SDL_SetRenderDrawColor(rendu, 150, 0, 150, 255);
-    SDL_SetRenderTarget(rendu, text);
-    SDL_RenderFillRect(rendu, &rect);
-    SDL_SetRenderTarget(rendu, NULL);
-
-    SDL_RenderPresent(rendu);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool isquit = false;
@@ -72,9 +58,9 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    SDL_DestroyTexture(text);
-    SDL_DestroyRenderer(rendu);
-    SDL_DestroyWindow(win);
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
     SDL_Quit();
     return EXIT_SUCCESS;
 }
