@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
     SDL_Renderer *renderer = NULL;
     SDL_Texture *texture = NULL;
     int statut = EXIT_FAILURE;
-
+    SDL_Rect rect = {100, 100, 100, 100}, dst = {0, 0, 0, 0};
+    SDL_Color rouge = {255, 0, 0, 255}, bleu = {0, 0, 255, 255};
     if(0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         if(NULL != texture)
@@ -70,15 +71,21 @@ int main(int argc, char *argv[]) {
         return statut;
     }
 
-        SDL_Rect srcrect = {50, 50, 100, 100};
-        SDL_Rect dstrect = {50, 50, 100, 100};
-        SDL_SetRenderDrawColor(renderer, 150, 0, 150, 255); /* On dessine en violet */
+        SDL_SetRenderTarget(renderer, texture);
+    /* La texture est la cible de rendu, maintenant, on dessine sur la texture. */
+    SDL_SetRenderDrawColor(renderer, bleu.r, bleu.g, bleu.b, bleu.a);
+    SDL_RenderClear(renderer);
+    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);
+    SDL_RenderFillRect(renderer, &rect); /* On dessine un rectangle rouge sur la texture. */
 
-        SDL_SetRenderTarget(renderer, texture); /* On va dessiner sur la texture */
-        SDL_RenderFillRect(renderer, &srcrect);
-        SDL_SetRenderTarget(renderer, NULL);
-        SDL_RenderCopy(renderer,texture,&srcrect,&dstrect);
-        SDL_RenderPresent(renderer);
+    SDL_SetRenderTarget(renderer, NULL); /* Le renderer est la cible de rendu. */
+
+    /* On récupère les dimensions de la texture, on la copie sur le renderer
+       et on met à jour l’écran. */
+    SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(renderer, texture, NULL, &dst);
+    SDL_RenderPresent(renderer);
+    statut = EXIT_SUCCESS;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool isquit = false;
