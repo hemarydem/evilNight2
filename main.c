@@ -45,8 +45,40 @@ int main(int argc, char *argv[]) {
             SDL_DestroyWindow(window);
         SDL_Quit();
         return statut;
-        }
+    }
+    if(0 != SDL_SetRenderDrawColor(renderer,255, 255, 220, SDL_ALPHA_OPAQUE)) {//preparing the color
+        fprintf(stderr, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
+        SDL_Quit();
+        return statut;
+    }
+    
+    if(0 != SDL_RenderClear(renderer)){// put the background color on the renderer
+        fprintf(stderr, "Erreur SDL_SetRenderDrawColor : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
+        SDL_Quit();
+        return statut;
+    }
 
+        SDL_Rect srcrect = {50, 50, 100, 100};
+        SDL_Rect dstrect = {50, 50, 100, 100};
+        SDL_SetRenderDrawColor(renderer, 150, 0, 150, 255); /* On dessine en violet */
+
+        SDL_SetRenderTarget(renderer, texture); /* On va dessiner sur la texture */
+        SDL_RenderFillRect(renderer, &srcrect);
+        SDL_SetRenderTarget(renderer, NULL);
+        SDL_RenderCopy(renderer,texture,&srcrect,&dstrect);
+        SDL_RenderPresent(renderer);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     bool isquit = false;
