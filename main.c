@@ -9,8 +9,10 @@ int main(int argc, char *argv[]) {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     SDL_Texture *texture = NULL;
+    SDL_Surface *tmp = NULL; 
     int statut = EXIT_FAILURE;
-    SDL_Rect dst = {0, 0, 50, 50};
+
+    SDL_Rect src = {10, 10, 20, 30}, dst = {0, 0, 20, 30};
     SDL_Color rouge = {255, 0, 0, 255}, bleu = {0, 0, 255, 255};
     if(0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
@@ -70,23 +72,38 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return statut;
     }
-    SDL_SetRenderTarget(renderer, texture);// on cible la texture
-    // La texture est la cible de rendu
-    //maintenant, on dessine sur la texture.
-    SDL_SetRenderDrawColor(renderer,255, 66, 150, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(renderer);
+    tmp = SDL_LoadBMP("src/icone.bmp");
+    if(NULL == tmp){
+    fprintf(stderr, "Erreur SDL_LoadBMP : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
+        SDL_Quit();
+        return statut;
+    }
 
-    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);//on colorrie le care en rouge
-    SDL_RenderFillRect(renderer, &dst); /* On dessine un rectangle rouge sur la texture. */
-    /* Le renderer est la cible de rendu. */
-    //c'est a dire que si on dessine à partire de maintenant on déssine sur le rendu
-    //générale
-    SDL_SetRenderTarget(renderer, NULL); 
+    texture = SDL_CreateTextureFromSurface(renderer, tmp);
+    SDL_FreeSurface(tmp); /* On libère la surface, on n’en a plus besoin */
+    if(NULL == texture) {
+    fprintf(stderr, "Erreur SDL_CreateTextureFromSurface : %s", SDL_GetError());
+        if(NULL != texture)
+            SDL_DestroyTexture(texture);
+        if(NULL != renderer)
+            SDL_DestroyRenderer(renderer);
+        if(NULL != window)
+            SDL_DestroyWindow(window);
+        SDL_Quit();
+        return statut;
+    }
+
 
     /* On récupère les dimensions de la texture, on la copie sur le renderer
        et on met à jour l’écran. */
-    SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
-    SDL_RenderCopy(renderer, texture, NULL, &dst);
+    //SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);//prend tous le rendu à cause du NULL NULL
     SDL_RenderPresent(renderer);
     statut = EXIT_SUCCESS;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
