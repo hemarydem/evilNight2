@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     SDL_Renderer *renderer = NULL;
     SDL_Texture *texture = NULL;
     int statut = EXIT_FAILURE;
-    SDL_Rect rect = {100, 100, 100, 100}, dst = {0, 0, 0, 0};
+    SDL_Rect dst = {0, 0, 50, 50};
     SDL_Color rouge = {255, 0, 0, 255}, bleu = {0, 0, 255, 255};
     if(0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
@@ -70,15 +70,18 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return statut;
     }
-
     SDL_SetRenderTarget(renderer, texture);// on cible la texture
-    /* La texture est la cible de rendu, maintenant, on dessine sur la texture. */
-    SDL_SetRenderDrawColor(renderer, bleu.r, bleu.g, bleu.b, bleu.a); // on transforme la texture en bleu
+    // La texture est la cible de rendu
+    //maintenant, on dessine sur la texture.
+    SDL_SetRenderDrawColor(renderer,255, 66, 150, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);//on colorrie le care en rouge
-    SDL_RenderFillRect(renderer, &rect); /* On dessine un rectangle rouge sur la texture. */
 
-    SDL_SetRenderTarget(renderer, NULL); /* Le renderer est la cible de rendu. */
+    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);//on colorrie le care en rouge
+    SDL_RenderFillRect(renderer, &dst); /* On dessine un rectangle rouge sur la texture. */
+    /* Le renderer est la cible de rendu. */
+    //c'est a dire que si on dessine à partire de maintenant on déssine sur le rendu
+    //générale
+    SDL_SetRenderTarget(renderer, NULL); 
 
     /* On récupère les dimensions de la texture, on la copie sur le renderer
        et on met à jour l’écran. */
