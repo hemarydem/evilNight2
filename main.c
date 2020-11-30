@@ -14,6 +14,8 @@ int main(int argc, char *argv[]) {
 
     SDL_Rect src = {10, 10, 20, 30}, dst = {0, 0, 20, 30};
     SDL_Color rouge = {255, 0, 0, 255}, bleu = {0, 0, 255, 255};
+
+    //intialisation
     if(0 != SDL_Init(SDL_INIT_VIDEO)) {
         fprintf(stderr, "Erreur SDL_Init : %s", SDL_GetError());
         if(NULL != texture)
@@ -25,6 +27,7 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return statut;
     }
+    // création du rendu et de la fenètre en même temps
     if(0 != SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_SHOWN, &window, &renderer)) {
         fprintf(stderr, "Erreur SDL_CreateWindowAndRenderer : %s", SDL_GetError());
         if(NULL != texture)
@@ -36,6 +39,7 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return statut;
     }
+
     texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, 
                                 SDL_TEXTUREACCESS_TARGET, 200, 200);
     if(NULL == texture) {
@@ -72,7 +76,7 @@ int main(int argc, char *argv[]) {
         SDL_Quit();
         return statut;
     }
-    tmp = SDL_LoadBMP("src/icone.bmp");
+    tmp = SDL_LoadBMP("src/icone.bmp");//on charge l'image
     if(NULL == tmp){
     fprintf(stderr, "Erreur SDL_LoadBMP : %s", SDL_GetError());
         if(NULL != texture)
