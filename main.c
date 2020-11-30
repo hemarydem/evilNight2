@@ -71,11 +71,11 @@ int main(int argc, char *argv[]) {
         return statut;
     }
 
-        SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, texture);// on cible la texture
     /* La texture est la cible de rendu, maintenant, on dessine sur la texture. */
-    SDL_SetRenderDrawColor(renderer, bleu.r, bleu.g, bleu.b, bleu.a);
+    SDL_SetRenderDrawColor(renderer, bleu.r, bleu.g, bleu.b, bleu.a); // on transforme la texture en bleu
     SDL_RenderClear(renderer);
-    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);
+    SDL_SetRenderDrawColor(renderer, rouge.r, rouge.g, rouge.b, rouge.a);//on colorrie le care en rouge
     SDL_RenderFillRect(renderer, &rect); /* On dessine un rectangle rouge sur la texture. */
 
     SDL_SetRenderTarget(renderer, NULL); /* Le renderer est la cible de rendu. */
