@@ -3,7 +3,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdint.h>
-#include<stdbool.h> 
+#include<stdbool.h>
+#define WINDOW_HEIGHT (640)
+#define WINDOW_WIDTH (480)
+#define SPEED (300)
 int erroStop(const char * erroMsg,SDL_Window *window, SDL_Renderer *renderer, SDL_Texture *texture);
 void erroCheck(int funReturn,const char * erroMsg,SDL_Window *window, SDL_Renderer *renderer, SDL_Texture *texture);
 //gcc main.c $(sdl2-config --cflags --libs)
@@ -29,46 +32,65 @@ int main(int argc, char **argv) {
     SDL_Texture *texture = NULL;
     SDL_Surface *tmp = NULL; 
     int statut = EXIT_FAILURE;
-    SDL_Rect src = {10, 10, 20, 30}, dst = {0, 0, 20, 30};
-    SDL_Color rouge = {255, 0, 0, 255}, bleu = {0, 0, 255, 255};
+    SDL_Rect dest;
     //intialisation
-    erroCheck(SDL_Init(SDL_INIT_VIDEO),"Erreur SDL_Init : %s",window,renderer,texture);
+    erroCheck(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER),"Erreur SDL_Init : %s",window,renderer,texture);
+   
     // création du rendu et de la fenètre en même temps
-    erroCheck(SDL_CreateWindowAndRenderer(640,480, SDL_WINDOW_SHOWN, &window, &renderer),"Erreur SDL_CreateWindowAndRenderer : %s",window,renderer,texture);
-    texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 200, 200);
-
-    if(NULL == texture) erroStop("Erreur SDL_CreateTexture : %s",window,renderer,texture);
-
-    //preparing the color
-    erroCheck(SDL_SetRenderDrawColor(renderer,255, 255, 220, SDL_ALPHA_OPAQUE),"Erreur SDL_SetRenderDrawColor : %s",window,renderer,texture);
-    
-    // put the background color on the renderer
-    erroCheck(SDL_RenderClear(renderer),"Erreur SDL_SetRenderDrawColor : %s",window,renderer,texture);
+    erroCheck(SDL_CreateWindowAndRenderer(WINDOW_HEIGHT,WINDOW_WIDTH, SDL_WINDOW_SHOWN, &window, &renderer),"Erreur SDL_CreateWindowAndRenderer : %s",window,renderer,texture);
     
     tmp = SDL_LoadBMP("src/icone.bmp");//on charge l'image
     if(NULL == tmp) erroStop("Erreur SDL_LoadBMP : %s",window,renderer,texture);
     
     texture = SDL_CreateTextureFromSurface(renderer, tmp);
     SDL_FreeSurface(tmp); /* On libère la surface, on n’en a plus besoin */
-    
     if(NULL == texture) erroStop("Erreur SDL_CreateTextureFromSurface : %s",window,renderer,texture);
+    
+    
+    //on prend les dimenssiond e la texture
+    SDL_QueryTexture(texture,NULL,NULL,&dest.w, &dest.h);
+    printf("dest x = %d\n", dest.x);
+    printf("dest y = %d\n\n", dest.y);
+    // on position au centre bas de la fenètre
+    dest.x = 0;
+    dest.y = 0;
+    printf("dest x = %d\n", dest.x);
+    printf("dest y = %d", dest.y);
+    
 
-    /* On récupère les dimensions de la texture, on la copie sur le renderer et on met à jour l’écran. */
-    //SDL_QueryTexture(texture, NULL, NULL, &dst.w, &dst.h);
-    SDL_RenderCopy(renderer, texture, NULL, NULL);//prend tous le rendu à cause du NULL NULL
-    SDL_RenderPresent(renderer);
-    statut = EXIT_SUCCESS;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    bool isquit = false;
-    SDL_Event event;
-    while (!isquit) {
-        if (SDL_PollEvent( & event)) {
-            if (event.type == SDL_QUIT) {
-                isquit = true;
+    while (dest.y < WINDOW_HEIGHT){
+        
+        // on effeca le contenu précédent
+        SDL_RenderClear(renderer);
+        //initialiser la position
+        dest.y += 20;
+        // mettre la texture sur le rendu
+        /*
+        Pour que la texture ci dessu soit plus petite 
+        il à la place de source il aurai fallu utiliser
+        un rectangle source aux dimenssion voulu
+        */
+        SDL_RenderCopy(renderer, texture, NULL, &dest);
+        //affichage du rendu
+        SDL_RenderPresent(renderer);
+        //mettre à jour la position du sprite
+        //y_pos -=(float) SPEED/60;
+        //la boucle rest tous les 60ieme de seconde pour
+        //être caler à 60 fps
+        SDL_Delay(1000/60);
+    }
+     bool isquit = false;
+        SDL_Event event;
+        while (!isquit) {
+            if (SDL_PollEvent( & event)) {
+                if (event.type == SDL_QUIT) {
+                    isquit = true;
+                }
             }
         }
-    }
+    statut = EXIT_SUCCESS;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
     SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
