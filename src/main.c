@@ -52,12 +52,59 @@ int main(int argc, char ** argv) {
     float mario_xVel = MARIOSPEED;
     float mario_yVel = MARIOSPEED;
     int close = 0;
+    int marioLastXY[2] = {mario_x_pos ,mario_yVel};
+    int pikachuLastXY[2] = {x_pos ,y_pos};
     //boucle d'annimation
     while (!close) {
+        //fair fonction get lastposition
+        marioLastXY[0] = mario_x_pos;
+        marioLastXY[1] = mario_yVel;
+        pikachuLastXY[0] = x_pos;
+        pikachuLastXY[1] = y_pos;
+
         SDL_Event event;
         while (SDL_PollEvent(&event) == 1) {
             if(event.type == SDL_QUIT) {
                  close = 1;
+            }
+            switch (event.type) {
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                        case SDLK_DOWN:
+                            y_pos += SPEED/30;
+                            printf("bas\n");
+                            break;
+                        case SDLK_UP:
+                            y_pos -= SPEED/30;
+                            printf("haut\n");
+                            break;
+                        case SDLK_LEFT:
+                            x_pos -= SPEED/30;
+                            printf("gauche\n");
+                            break;
+                        case SDLK_RIGHT:
+                            x_pos += SPEED/30;
+                            printf("droite\n");
+
+                            //mario
+                        case SDLK_s:
+                            mario_y_pos += MARIOSPEED/30;
+                            printf("bas\n");
+                            break;
+                        case SDLK_z:
+                            mario_y_pos -= MARIOSPEED/30;
+                            printf("haut\n");
+                            break;
+                        case SDLK_q:
+                            mario_x_pos -= MARIOSPEED/30;
+                            printf("gauche\n");
+                            break;
+                        case SDLK_d:
+                            mario_x_pos += MARIOSPEED/30;
+                            printf("droite\n");
+                            break;
+                    }
+                break;
             }
         }
         //manage colistion pikachu
@@ -70,22 +117,28 @@ int main(int argc, char ** argv) {
         dontCrosseBorder(&mario_yVel, &mario_y_pos);
         dontCrosseBottomBorder(WINDOW_WIDTH,mario.w,&mario_xVel,&mario_x_pos);
         dontCrosseBottomBorder(WINDOW_HEIGHT,mario.h,&mario_yVel,&mario_y_pos);
-        if (SDL_HasIntersection(&mario,&pikachu)){
-            mario_xVel = - mario_xVel;
-            mario_yVel = - mario_yVel;
-            xVel = - xVel;
-            yVel = - yVel;
-        }
-        x_pos += xVel/60;
-        y_pos += yVel/60;
+
+        //x_pos += xVel/60;
+        //y_pos += yVel/60;
         pikachu.x = (int) x_pos;
         pikachu.y = (int) y_pos;
 
-        mario_x_pos += mario_xVel/60;
-        mario_y_pos += mario_yVel/60;
+        //mario_x_pos += mario_xVel/60;
+        //mario_y_pos += mario_yVel/60;
 
         mario.x = (int) mario_x_pos;
         mario.y = (int) mario_y_pos;
+        if (SDL_HasIntersection(&mario,&pikachu)){
+            /*mario_xVel = - mario_xVel;
+            mario_yVel = - mario_yVel;
+            xVel = - xVel;
+            yVel = - yVel;*/
+            mario_x_pos = marioLastXY[0];
+            mario_yVel = marioLastXY[1];
+            x_pos = pikachuLastXY[0];
+            y_pos = pikachuLastXY[1];
+        }
+
         //permet de savoir qui est la cible
         //SDL_RenderTargetSupported(renderer)
         SDL_SetRenderTarget(renderer,arenaTex);
