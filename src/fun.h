@@ -1,6 +1,7 @@
 #ifndef fun_h
 #define fun_h
 #include <SDL.h>
+#include<SDL_image.h>
 #include<stdint.h>
 #include<stdlib.h>
 #include<stdio.h>

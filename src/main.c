@@ -1,26 +1,20 @@
 /*
-* gcc src/main.c -o bin/anmation.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
-* mac command
-*gcc src/main.c src/fun.c -o bin/pika.app  $(sdl2-config --cflags --libs)
-*remy hamed
-*ce programme fait un animation d'une image qu va ver le haut
-*
-*
+gcc src/*.c -o bin/toto.app $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf
 */
 
-#include <SDL.h>
+#include<SDL.h>
 #include<stdint.h>
 #include<stdlib.h>
 #include<stdio.h>
 #include<stdbool.h>
+#include<SDL_image.h>
+#include<SDL_ttf.h>
 #include "fun.h"
 #define WINDOW_WIDTH (620)
 #define WINDOW_HEIGHT (440)
 #define SPEED (300)
 #define MARIOSPEED (150)
-//gcc src/main.c src/fun.c -o bin/pika.app  $(sdl2-config --cflags --libs)
-//gcc src/main.c src/fun.c -o bin/uPikachu.exe -I include -L lib -lmingw32 -lSDL2main -lSDL2
-//bin/uPikachu.exe
+
 int main(int argc, char ** argv) {
     SDL_Window * win;
     SDL_Renderer * renderer;
@@ -38,8 +32,9 @@ int main(int argc, char ** argv) {
     pikaTex = buildTextur("img/pika.bmp", renderer, pikaTex); 
     freeAndQuitIfNull(pikaTex == NULL,"error creation texture" ,win, renderer,pikaTex);
     arenaTex = buildTextur("img/arena.bmp", renderer, arenaTex); 
-    freeAndQuitIfNull(pikaTex == NULL,"error creation texture" ,win, renderer,pikaTex);
+    freeAndQuitIfNull(arenaTex == NULL,"error creation texture" ,win, renderer,pikaTex);
     marioTex = buildTextur("img/mario.bmp", renderer, marioTex);
+    freeAndQuitIfNull(marioTex == NULL,"error creation texture" ,win, renderer,pikaTex);
     //prend la lngeur et la hauter de la textre 
     SDL_QueryTexture(pikaTex,NULL,NULL, &pikachu.w, &pikachu.h);
     SDL_QueryTexture(marioTex,NULL,NULL, &mario.w, &mario.h);
@@ -52,12 +47,10 @@ int main(int argc, char ** argv) {
     float x_pos = (WINDOW_WIDTH - pikachu.w) / 2;
     float xVel = SPEED;
     float yVel = SPEED;
-
     float mario_y_pos = 10;
     float mario_x_pos = 10;
     float mario_xVel = MARIOSPEED;
     float mario_yVel = MARIOSPEED;
-
     int close = 0;
     //boucle d'annimation
     while (!close) {

@@ -1,0 +1,11 @@
+
+
+
+
+Pour compiler le programme sur mac
+gcc src/*.c -o bin/toto.app $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf
+
+
+
+Pour compiler sur pc (la commande n'intègre)
+gcc src/main.c src/fun.c -o bin/uPikachu.exe -I include -L lib -lSDL2_image -lSDL2main -lSDL2

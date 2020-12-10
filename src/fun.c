@@ -1,5 +1,6 @@
 #include "fun.h"
 #include <SDL.h>
+#include<SDL_image.h>
 #include<stdint.h>
 #include<stdlib.h>
 #include<stdio.h>
@@ -8,11 +9,12 @@
 
 SDL_Texture * buildTextur(const char * imgPath, SDL_Renderer * renderer, SDL_Texture *texture){
     SDL_Surface * surface;
-     surface = SDL_LoadBMP(imgPath);
+     surface = IMG_Load(imgPath);
     if(!surface){
         printf("\nERROR BUILD SURFACE");
         return NULL;
     }
+    SDL_SetColorKey(surface, 1,SDL_MapRGB(surface->format, 255, 255, 255));
     texture = SDL_CreateTextureFromSurface(renderer,surface);
     SDL_FreeSurface(surface);
     return texture;
